@@ -59,10 +59,10 @@ class TestWorkerBasic(unittest.TestCase):
 
 		results, next_page = worker.parse_text(str(text).strip().replace('\r\n', ''))
 		
-		self.assertIsNotNone(results)		# Check if results were created and returned 
-		self.assertTrue(len(results) > 0)	# Check if number of results is positive
-		self.assertIs(type(results), [])	# Check if results is a list
-		self.assertNotEqual(results[0], ())	# Check if results value is not an empty tuple
+		self.assertIsNotNone(results)			# Check if results were created and returned 
+		self.assertTrue(len(results) > 0)		# Check if number of results is positive
+		self.assertIs(type(results), type([]))	# Check if results is a list
+		self.assertNotEqual(results[0], ())		# Check if results value is not an empty tuple
 	
 	def test_worker_add_links_under_max_limit(self):
 		worker = None
