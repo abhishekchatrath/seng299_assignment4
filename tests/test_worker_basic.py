@@ -50,16 +50,56 @@ class TestWorkerBasic(unittest.TestCase):
 
         self.assertEqual(len_to_crawl_after, len_to_crawl_before)
 
-    #def test_worker_add_links_in_crawled(self):
-    #    worker = BasicUserParseWorker("https://www.reddit.com/user/Chrikelnel")
-    #    worker.crawled = []
-	#
-    #    len_to_crawl_before = len(worker.to_crawl)
-    #    worker.add_links(["https://www.reddit.com/user/Chrikelnel"])
-    #    len_to_crawl_after = len(worker.to_crawl)
-	#
-    #    self.assertEqual(len_to_crawl_after, len_to_crawl_before)
+	"""My unit tests"""
+	def test_worker_parsing_results_not_empty(self):
+		worker = BasicUserParseWorker("https://www.reddit.com/user/Chrikelnel")
+        file_path = '%s/%s' % (os.path.dirname(os.path.realpath(__file__)), 'test_resources/sample_GET_response.html')
 
+        with codecs.open(file_path, encoding='utf-8') as f:
+            text = f.read()
+
+        results, next_page = worker.parse_text(str(text).strip().replace('\r\n', ''))
+		
+		self.assertIsNotNone(results)		# Check if results were created and returned 
+		self.assertTrue(len(results) > 0)	# Check if number of results is positive
+		self.assertIs(type(results), [])	# Check if results is a list
+		self.assertNotEqual(results[0], ())	# Check if results value is not an empty tuple
+	
+	def test_worker_add_links_under_max_limit(self):
+		worker = None
+        worker = BasicUserParseWorker("https://www.reddit.com/user/Chrikelnel")
+
+        worker.max_links = 7											# max_links = 7 now
+        len_to_crawl_before = len(worker.to_crawl)
+        worker.add_links("test.com")
+        len_to_crawl_after = len(worker.to_crawl)
+
+        self.assertNotEqual(len_to_crawl_after, len_to_crawl_before)	# Check that add_links adds links successfuly
+		
+	
+	def test_worker_parsing_next_page(self):
+		worker = BasicUserParseWorker("https://www.reddit.com/user/Chrikelnel")
+        file_path = '%s/%s' % (os.path.dirname(os.path.realpath(__file__)), 'test_resources/sample_GET_response.html')
+
+        with codecs.open(file_path, encoding='utf-8') as f:
+            text = f.read()
+
+        results, next_page = worker.parse_text(str(text).strip().replace('\r\n', ''))
+		
+		self.assertIsNotNone(next_page)
+		self.assertGreater(len(next_page), 0)
+	
+"""
+    def test_worker_add_links_in_crawled(self):
+        worker = BasicUserParseWorker("https://www.reddit.com/user/Chrikelnel")
+        worker.crawled = []
+	
+        len_to_crawl_before = len(worker.to_crawl)
+        worker.add_links(["https://www.reddit.com/user/Chrikelnel"])
+        len_to_crawl_after = len(worker.to_crawl)
+	
+        self.assertEqual(len_to_crawl_after, len_to_crawl_before)
+"""
 
 
 
